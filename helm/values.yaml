@@ -1,0 +1,23 @@
+replicaCount: 2
+
+image:
+  repository: docker.io/yourusername/aryaxai-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+config:
+  log_level: INFO
+
+secret:
+  api_key: Y2hhbmdlbWU= # Base64 encoded "changeme"

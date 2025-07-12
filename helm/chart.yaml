@@ -1,0 +1,5 @@
+apiVersion: v2
+name: aryaxai-app
+description: A Helm chart for AryaXAI microservice
+version: 0.1.0
+appVersion: "1.0"
