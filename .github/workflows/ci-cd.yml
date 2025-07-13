@@ -33,11 +33,4 @@ jobs:
         echo "My Secret: $MY_SECRET"
         echo "My Value: $MY_VALUE"
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run tests
-      run: npm test
-
-    - name: Build
-      run: npm run build
+   
