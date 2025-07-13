@@ -36,7 +36,7 @@ jobs:
         flake8 app --max-line-length=88 --extend-ignore=E203
     - name: Run tests
       run: |
-        pytest app/tests
+        pytest app/test
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
