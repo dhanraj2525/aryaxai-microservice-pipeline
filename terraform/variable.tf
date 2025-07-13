@@ -1,7 +1,3 @@
-variable "profile" {
-  default = "ssmz-qa"
-}
-
 variable "region" {
   description = "AWS region"
   type        = string
