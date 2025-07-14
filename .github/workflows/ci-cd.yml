@@ -41,9 +41,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-            run: |
-              docker build - dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
-              docker push  dhanraj2525/aryaxai-microservice-pipeline
+        run: |
+          docker build - dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
+          docker push  dhanraj2525/aryaxai-microservice-pipeline
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
