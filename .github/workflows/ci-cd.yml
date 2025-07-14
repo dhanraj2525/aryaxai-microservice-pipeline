@@ -26,12 +26,12 @@ jobs:
       - name: Lint with flake8
         run: |
           flake8 app --max-line-length=88 --extend-ignore=E203
-        continue-on-error: true # Allow pipeline to continue if linting fails
+        continue-on-error: true
 
       - name: Run tests
         run: |
-          pytest app/tests --verbose
-        continue-on-error: false # Fail pipeline if tests fail
+          pytest app/test --verbose
+        continue-on-error: false
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -43,10 +43,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile # Explicitly specify Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/aryaxai-app:latest
-          platforms: linux/amd64 # Specify platform for consistency
+          platforms: linux/amd64
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
@@ -69,5 +69,6 @@ jobs:
       #     helm upgrade --install aryaxai-app ./helm \
       #       --set image.repository=${{ secrets.DOCKER_USERNAME }}/aryaxai-app \
       #       --set image.tag=latest \
+      #       --set service.port=8000 \
       #       --namespace default \
       #       --wait --timeout 5m

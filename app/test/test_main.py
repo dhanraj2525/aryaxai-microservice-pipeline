@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
-from main import app
+from ..main import app  # Adjusted import to handle relative path
 
 client = TestClient(app)
+
 
 def test_read_root():
     response = client.get("/")
