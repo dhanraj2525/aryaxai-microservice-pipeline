@@ -29,6 +29,8 @@ jobs:
         continue-on-error: true
 
       - name: Run tests
+        env:
+          PYTHONPATH: ./app
         run: |
           pytest app/test --verbose
         continue-on-error: false
