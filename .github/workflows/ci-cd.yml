@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest app/test --verbose
+          pytest app/tests --verbose
         continue-on-error: false # Fail pipeline if tests fail
 
       - name: Log in to Docker Hub
