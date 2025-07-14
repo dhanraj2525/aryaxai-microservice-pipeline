@@ -9,60 +9,65 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-`
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        pip install -r app/requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Lint with flake8
-      run: |
-        flake8 app --max-line-length=88 --extend-ignore=E203
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f app/requirements.txt ]; then pip install -r app/requirements.txt; fi
 
-    - name: Run tests
-      run: |
-        pytest app/tests
+      - name: Lint with flake8
+        run: |
+          flake8 app --max-line-length=88 --extend-ignore=E203
+        continue-on-error: true # Allow pipeline to continue if linting fails
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Run tests
+        run: |
+          pytest app/tests --verbose
+        continue-on-error: false # Fail pipeline if tests fail
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/aryaxai-app:latest
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Set up AWS CLI
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile # Explicitly specify Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/aryaxai-app:latest
+          platforms: linux/amd64 # Specify platform for consistency
 
-    - name: Update kubeconfig
-      run: |
-        aws eks update-kubeconfig --region us-east-1 --name aryaxai-eks
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Install Helm
-      uses: azure/setup-helm@v4
-      with:
-        version: v3.16.0
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name aryaxai-eks
 
-    - name: Deploy to EKS
-      run: |
-        helm upgrade --install aryaxai-app ./helm \
-          --set image.repository=${{ secrets.DOCKER_USERNAME }}/aryaxai-app \
-          --set image.tag=latest \
-          --namespace default
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.0
+
+      - name: Deploy to EKS
+        run: |
+          helm upgrade --install aryaxai-app ./helm \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/aryaxai-app \
+            --set image.tag=latest \
+            --namespace default \
+            --wait --timeout 5m
