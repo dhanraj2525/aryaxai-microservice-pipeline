@@ -29,32 +29,21 @@ jobs:
         continue-on-error: true
 
       - name: Run tests
-        env:
-          PYTHONPATH: ./app
         run: |
           pytest app/test --verbose
         continue-on-error: false
 
-      - name: Debug Docker environment
-        run: |
-          docker info --format '{{.RegistryConfig.IndexConfigs}}'
-        continue-on-error: true
-
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+            uses: docker/login-action@v3
+            with:
+              registry: ghcr.io
+              username: ${{ github.actor }}
+              password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/aryaxai-app:latest
-          platforms: linux/amd64
+            run: |
+              docker build - dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
+              docker push  dhanraj2525/aryaxai-microservice-pipeline
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
