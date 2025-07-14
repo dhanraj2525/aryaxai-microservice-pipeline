@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 
+
 app = FastAPI()
+
 
 # This is a sample API endpoint
 @app.get("/")
