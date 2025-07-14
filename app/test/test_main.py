@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from ..main import app  # Adjusted import to handle relative path
+from main import app  # Use absolute import
 
 client = TestClient(app)
 
