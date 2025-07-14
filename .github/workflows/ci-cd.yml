@@ -43,7 +43,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
-          docker push  dhanraj2525/aryaxai-microservice-pipeline
+          docker push  dhanraj2525/aryaxai-microservice-pipeline:1.0.0
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
