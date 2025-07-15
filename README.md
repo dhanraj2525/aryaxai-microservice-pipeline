@@ -1,32 +1,29 @@
-AryaXAI Microservice Pipeline
+# AryaXAI Microservice Pipeline
+
 This repository contains an end-to-end production pipeline for a FastAPI-based microservice deployed on a publicly accessible AWS EKS cluster using Terraform, Docker, Helm, and GitHub Actions.
-Prerequisites
 
-AWS Account: Configured with programmatic access (Access Key ID and Secret Access Key).
-Docker Hub Account: For storing the demo_image:latest image.
-GitHub Repository: With secrets configured for CI/CD.
-Local Tools:
-Terraform (>= 1.9.0)
-Helm (>= 3.16.0)
-kubectl (>= 1.31.0)
-AWS CLI
-Python 3.12
+## Prerequisites
 
+- **AWS Account**: Configured with programmatic access (Access Key ID and Secret Access Key).
+- **Docker Hub Account**: For storing the `demo_image:latest` image.
+- **GitHub Repository**: With secrets configured for CI/CD.
+- **Local Tools**:
+  - Terraform (>= 1.9.0)
+  - Helm (>= 3.16.0)
+  - kubectl (>= 1.31.0)
+  - AWS CLI
+  - Python 3.12
+- **Local Kubernetes Cluster** (optional): For local testing (e.g., `kind` or `minikube`).
 
-Local Kubernetes Cluster (optional): For local testing (e.g., kind or minikube).
+## Repository Structure
 
-Repository Structure
-aryaxai-microservice-pipeline/
-├── app/                  # FastAPI application code and tests
-├── terraform/            # Terraform code for EKS cluster
-├── helm/                 # Helm chart for application deployment
-├── .github/workflows/    # GitHub Actions CI/CD pipeline
-├── Dockerfile            # Multi-stage Dockerfile
-├── DESIGN.md             # Observability strategy
-├── README.md             # This operational runbook
+aryaxai-microservice-pipeline/├── app/                  # FastAPI application code and tests├── terraform/            # Terraform code for EKS cluster├── helm/                 # Helm chart for application deployment├── .github/workflows/    # GitHub Actions CI/CD pipeline├── Dockerfile            # Multi-stage Dockerfile├── DESIGN.md             # Observability strategy├── README.md             # This operational runbook
 
-Setup Instructions
-1. Clone the Repository
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/yourusername/aryaxai-microservice-pipeline.git
 cd aryaxai-microservice-pipeline
 
@@ -111,4 +108,9 @@ terraform destroy -var="region=us-west-2" -var="cluster_name=aryaxai-eks"
 Notes
 
 Replace yourusername in helm/values.yaml and .github/workflows/ci-cd.yml with your Docker Hub username.
-The EKS cluster API is publicly accessible (`cluster_endpoint_public_access = true
+The EKS cluster API is publicly accessible (cluster_endpoint_public_access = true). Restrict cluster_endpoint_public_access_cidrs in terraform/main.tf for production (e.g., ["your.ip.range/24"]).
+Ensure AWS credentials have permissions for EKS, EC2, VPC, and IAM.
+The Helm chart is configurable via helm/values.yaml for replicas, resources, etc.
+For local testing, use kind or minikube if you don’t want to provision EKS.
+
+
