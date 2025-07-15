@@ -69,7 +69,7 @@ jobs:
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+          push-to-registry: false
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
