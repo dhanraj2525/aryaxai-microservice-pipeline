@@ -90,8 +90,7 @@ jobs:
       - name: Deploy to EKS
         run: |
           helm upgrade --install aryaxai-app ./helm \
-            --set image.repository=${{ secrets.DOCKER_USERNAME }}/aryaxai-app \
-            --set image.tag=latest \
+            --set image.repository=ghcr.io/${{ github.repository }} \
+            --set image.tag=${{ steps.meta.outputs.version }} \
             --set service.port=8000 \
-            --namespace default \
-            --wait --timeout 5m
+            --namespace default
