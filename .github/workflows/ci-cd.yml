@@ -41,13 +41,14 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GIT_PAT_TOKEN }}
+          password: ${{ secrets.CA_PAT }}
 
 
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
-
+          docker push ghcr.io/dhanraj2525/aryaxai-microservice-pipeline:1.0.0
+          
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
       #   with:
