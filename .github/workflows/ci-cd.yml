@@ -5,8 +5,10 @@ on:
     branches:
       - test
 permissions:
-  contents: read
   packages: write
+  contents: read
+  attestations: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -41,7 +43,8 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: "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"
+          password: ${{ secrets.CA_PAT }}
+          #password: "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"
           # password: ${{ secrets.CA_PAT }}
 
 
