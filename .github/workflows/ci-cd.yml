@@ -4,17 +4,21 @@ on:
   push:
     branches:
       - test
-permissions:
-  packages: write
-  contents: read
-  attestations: write
-  id-token: write
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -38,20 +42,34 @@ jobs:
           PYTHONPATH=app pytest app/test --verbose
         continue-on-error: false
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.CA_PAT }}
-          #password: "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"
-          # password: ${{ secrets.CA_PAT }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-
-      - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/dhanraj2525/aryaxai-microservice-pipeline:1.0.0 .
-          docker push ghcr.io/dhanraj2525/aryaxai-microservice-pipeline:1.0.0
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
 
       # - name: Set up AWS CLI
       #   uses: aws-actions/configure-aws-credentials@v4
